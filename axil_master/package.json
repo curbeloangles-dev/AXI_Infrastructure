@@ -1,0 +1,20 @@
+{
+    "name": "@quside/axil_master",
+    "version": "1.0.0",
+    "description": "AXI-Lite Master.",
+    "keywords": [
+      "AXI-lite",
+      "axil_master"
+    ],
+    "files": [
+      "doc",
+      "src",
+      "tb",
+      "README.md"
+    ],
+    "dependencies": {},
+    "scripts": {
+      "postinstall": "",
+      "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axil_master.py; cd .."
+    }
+}

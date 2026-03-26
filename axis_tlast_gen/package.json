@@ -1,0 +1,21 @@
+{
+  "name": "@quside/axis_tlastgen",
+  "version": "1.0.0",
+  "description": "AXI modules",
+  "keywords": [
+    "AXI",
+    "AXIS"
+  ],
+  "files": [
+    "doc",
+    "src",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "postinstall": "",
+    "test_axi_lite": "cd tb; SIM=ghdl pytest -o log_cli=True tlast_test.py::test_tlast_ghdl",
+    "test_full_axi": "cd tb; SIM=ghdl pytest -o log_cli=True tlast_test.py::test_tlast_fullaxi_ghdl"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@quside/axi_gpio",
+  "version": "1.0.0",
+  "description": "AXI GPIO module",
+  "keywords": [
+    "AXI",
+    "GPIO"
+  ],
+  "files": [
+    "doc",
+    "src",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "postinstall": "",
+    "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axi_gpio.py; cd .."
+  }
+}

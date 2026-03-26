@@ -1,0 +1,24 @@
+{
+  "name": "@quside/axis_counter",
+  "version": "1.0.0",
+  "description": "AXI-Lite configurated counter to AXI-Streaming",
+  "keywords": [
+    "AXI-Streaming",
+    "axis",
+    "counter"
+  ],
+  "files": [
+    "doc",
+    "src",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "tests": "cd tb; SIM=ghdl TEST_NAME=test_all pytest -o log_cli=True test_axis_counter.py",
+    "tests_reset": "cd tb; SIM=ghdl TEST_NAME=reset_tb pytest -o  log_cli=True test_axis_counter.py",
+    "tests_counter_up":"cd tb; SIM=ghdl TEST_NAME=counter_up_tb pytest -o log_cli=True test_axis_counter.py",
+    "tests_counter_down":"cd tb; SIM=ghdl TEST_NAME=counter_down_tb pytest -o log_cli=True test_axis_counter.py",
+    "tests_counter_start_and_stop":"cd tb; SIM=ghdl TEST_NAME=counter_start_and_stop_tb pytest -o log_cli=True test_axis_counter.py"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@quside/axil_regs",
+  "version": "1.0.0",
+  "description": "AXI-lite register-based memory",
+  "keywords": [
+    "AXI-lite",
+    "axil_regs",
+    "regs"
+  ],
+  "files": [
+    "doc",
+    "src",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "postinstall": "",
+    "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axil_regs.py"
+  }
+}

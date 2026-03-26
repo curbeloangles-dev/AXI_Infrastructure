@@ -1,0 +1,22 @@
+{
+  "name": "@quside/axil_bram",
+  "version": "1.0.0",
+  "description": "AXI-lite memory.",
+  "keywords": [
+    "AXI-lite",
+    "axil_bram",
+    "bram"
+  ],
+  "files": [
+    "doc",
+    "src",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {
+  },
+  "scripts": {
+    "postinstall": "",
+    "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axil_bram.py; cd .."
+  }
+}

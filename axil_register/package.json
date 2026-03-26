@@ -1,0 +1,21 @@
+{
+  "name": "@quside/axil_register",
+  "version": "1.0.0",
+  "description": "Simple AXI-lite bus register",
+  "keywords": [
+    "AXI-lite",
+    "axil_regs",
+    "register"
+  ],
+  "files": [
+    "src",
+    "doc",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "postinstall": "",
+    "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axil_register.py"
+  }
+}

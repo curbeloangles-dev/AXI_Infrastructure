@@ -1,0 +1,657 @@
+name: AXI Infrastructure CI/CD pipeline
+on: [push, pull_request]
+
+jobs:
+  # axi_gpio jobs
+  axi_gpio_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axi_gpio/
+        run: |
+          # Create temporary .npmrc file in this directory
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          # Check if package version exists
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axi_gpio
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axi_gpio_test:
+    needs: axi_gpio_check
+    if: needs.axi_gpio_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axi_gpio test
+        run: |
+          cd axi_gpio
+          npm run test
+
+  axi_gpio_release:
+    needs: [axi_gpio_check, axi_gpio_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axi_gpio_check.outputs.should_publish == 'true' &&
+      needs.axi_gpio_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axi_gpio IP if version changed
+        working-directory: ./axi_gpio/
+        run: |
+          # Create temporary .npmrc file in this directory
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axi_gpio
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axil_regs jobs
+  axil_regs_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axil_regs/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_regs
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axil_regs_test:
+    needs: axil_regs_check
+    if: needs.axil_regs_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axil_regs test
+        run: |
+          cd axil_regs
+          npm run test
+
+  axil_regs_release:
+    needs: [axil_regs_check, axil_regs_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axil_regs_check.outputs.should_publish == 'true' &&
+      needs.axil_regs_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axil_regs IP if version changed
+        working-directory: ./axil_regs/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_regs
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axil_register jobs
+  axil_register_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axil_register/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_register
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axil_register_test:
+    needs: axil_register_check
+    if: needs.axil_register_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axil_register test
+        run: |
+          cd axil_register
+          npm run test
+
+  axil_register_release:
+    needs: [axil_register_check, axil_register_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axil_register_check.outputs.should_publish == 'true' &&
+      needs.axil_register_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axil_register IP if version changed
+        working-directory: ./axil_register/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_register
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axil_bram jobs
+  axil_bram_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axil_bram/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_bram
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axil_bram_test:
+    needs: axil_bram_check
+    if: needs.axil_bram_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axil_bram test
+        run: |
+          cd axil_bram
+          npm run test
+
+  axil_bram_release:
+    needs: [axil_bram_check, axil_bram_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axil_bram_check.outputs.should_publish == 'true' &&
+      needs.axil_bram_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axil_bram IP if version changed
+        working-directory: ./axil_bram/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_bram
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axil_master jobs
+  axil_master_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axil_master/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_master
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axil_master_test:
+    needs: axil_master_check
+    if: needs.axil_master_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axil_master test
+        run: |
+          cd axil_master
+          npm run test
+
+  axil_master_release:
+    needs: [axil_master_check, axil_master_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axil_master_check.outputs.should_publish == 'true' &&
+      needs.axil_master_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axil_master IP if version changed
+        working-directory: ./axil_master/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axil_master
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axis_counter jobs
+  axis_counter_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axis_counter/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axis_counter
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axis_counter_test:
+    needs: axis_counter_check
+    if: needs.axis_counter_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axis_counter test
+        run: |
+          cd axis_counter
+          npm run test
+
+  axis_counter_release:
+    needs: [axis_counter_check, axis_counter_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axis_counter_check.outputs.should_publish == 'true' &&
+      needs.axis_counter_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axis_counter IP if version changed
+        working-directory: ./axis_counter/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axis_counter
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axis_tlast_gen jobs
+  axis_tlast_gen_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axis_tlast_gen/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axis_tlast_gen
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axis_tlast_gen_test:
+    needs: axis_tlast_gen_check
+    if: needs.axis_tlast_gen_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GHDL
+        uses: ghdl/setup-ghdl@v1
+        with:
+          version: nightly
+          backend: llvm
+          investigate: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+
+      - name: Install dependencies
+        run: |
+          pip install cocotb==1.8.1 pytest cocotb-test
+
+      - name: Run axis_tlast_gen test
+        run: |
+          cd axis_tlast_gen
+          npm run test
+
+  axis_tlast_gen_release:
+    needs: [axis_tlast_gen_check, axis_tlast_gen_test]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/master' &&
+      needs.axis_tlast_gen_check.outputs.should_publish == 'true' &&
+      needs.axis_tlast_gen_test.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axis_tlast_gen IP if version changed
+        working-directory: ./axis_tlast_gen/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axis_tlast_gen
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish
+          echo "✅ Successfully published $PKG@$VERSION"
