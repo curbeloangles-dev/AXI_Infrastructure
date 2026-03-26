@@ -57,7 +57,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install cocotb==1.8.1 pytest cocotb-test
+          pip install cocotb==1.8.1 pytest cocotb-test cocotb-bus
 
       - name: Run axi_gpio test
         run: |
@@ -68,7 +68,7 @@ jobs:
     needs: [axi_gpio_check, axi_gpio_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axi_gpio_check.outputs.should_publish == 'true' &&
       needs.axi_gpio_test.result == 'success'
     runs-on: ubuntu-latest
@@ -151,7 +151,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install cocotb==1.8.1 pytest cocotb-test
+          pip install cocotb==1.8.1 pytest cocotb-test cocotb-bus
 
       - name: Run axil_regs test
         run: |
@@ -162,7 +162,7 @@ jobs:
     needs: [axil_regs_check, axil_regs_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axil_regs_check.outputs.should_publish == 'true' &&
       needs.axil_regs_test.result == 'success'
     runs-on: ubuntu-latest
@@ -255,7 +255,7 @@ jobs:
     needs: [axil_register_check, axil_register_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axil_register_check.outputs.should_publish == 'true' &&
       needs.axil_register_test.result == 'success'
     runs-on: ubuntu-latest
@@ -337,7 +337,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install cocotb==1.8.1 pytest cocotb-test
+          pip install cocotb==1.8.1 pytest cocotb-test cocotb-bus
 
       - name: Run axil_bram test
         run: |
@@ -348,7 +348,7 @@ jobs:
     needs: [axil_bram_check, axil_bram_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axil_bram_check.outputs.should_publish == 'true' &&
       needs.axil_bram_test.result == 'success'
     runs-on: ubuntu-latest
@@ -441,7 +441,7 @@ jobs:
     needs: [axil_master_check, axil_master_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axil_master_check.outputs.should_publish == 'true' &&
       needs.axil_master_test.result == 'success'
     runs-on: ubuntu-latest
@@ -528,13 +528,13 @@ jobs:
       - name: Run axis_counter test
         run: |
           cd axis_counter
-          npm run test
+          npm run tests
 
   axis_counter_release:
     needs: [axis_counter_check, axis_counter_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axis_counter_check.outputs.should_publish == 'true' &&
       needs.axis_counter_test.result == 'success'
     runs-on: ubuntu-latest
@@ -621,13 +621,14 @@ jobs:
       - name: Run axis_tlast_gen test
         run: |
           cd axis_tlast_gen
-          npm run test
+          npm run test_axi_lite
+          npm run test_full_axi
 
   axis_tlast_gen_release:
     needs: [axis_tlast_gen_check, axis_tlast_gen_test]
     if: |
       always() &&
-      github.ref == 'refs/heads/master' &&
+      github.ref == 'refs/heads/main' &&
       needs.axis_tlast_gen_check.outputs.should_publish == 'true' &&
       needs.axis_tlast_gen_test.result == 'success'
     runs-on: ubuntu-latest

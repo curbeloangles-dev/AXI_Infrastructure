@@ -15,9 +15,9 @@ sources_list += glob.glob(dir+"/*.vhd")
 def test_axil_register_tb_ghdl(parameters):
     run(
         vhdl_sources=[os.path.join(dir,file)
-            for file in sources_list],       # sources
-        toplevel="axil_register_tb",            # top level HDL
-        module="axil_register_tb",        # name of cocotb test module
+            for file in sources_list],          # sources
+        toplevel="axil_register_top",           # top level HDL
+        module="axil_register_tb",              # name of cocotb test module
         toplevel_lang="vhdl",
         compile_args=["--ieee=synopsys","--std=08"],
         parameters=parameters,
