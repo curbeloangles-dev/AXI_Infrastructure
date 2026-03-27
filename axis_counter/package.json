@@ -1,5 +1,5 @@
 {
-  "name": "@quside/axis_counter",
+  "name": "@curbeloangles-dev/axis_counter",
   "version": "1.0.0",
   "description": "AXI-Lite configurated counter to AXI-Streaming",
   "keywords": [

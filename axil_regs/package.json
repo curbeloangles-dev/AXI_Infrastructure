@@ -1,5 +1,5 @@
 {
-  "name": "@quside/axil_regs",
+  "name": "@curbeloangles-dev/axil_regs",
   "version": "1.0.0",
   "description": "AXI-lite register-based memory",
   "keywords": [
