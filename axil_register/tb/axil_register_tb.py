@@ -24,23 +24,19 @@ async def axil_register_test(dut):
     # Reset core
     dut.axi_aresetn.value = 0 
     await Timer(5*c_CLK_PERIOD, units='ns')
+    await RisingEdge(dut.S_ACLK)
     dut.axi_aresetn.value = 1
     await Timer(5*c_CLK_PERIOD, units='ns') 
-    await RisingEdge(dut.S_ACLK)
 
     # AXI-Lite read VERSION
     dut._log.info("AXI-Lite: Reading")
     base_addr = c_CORE_BASE_ADDR
     dut._log.info("AXI-Lite: Reading address 0x%02X" % (base_addr))
-    s_value_read = await axil_m.read(address = 0x0 + base_addr, length = 4)
+    s_value_read = await axil_m.read(address = base_addr, length = 4)
     core_number = 1
     assert int.from_bytes(s_value_read.data, 'little') == core_number # Check the version. Each version core correspond to the core number.
     await Timer(5*c_CLK_PERIOD, units='ns')
     await RisingEdge(dut.S_ACLK)
-    # dut._log.info("AXI-Lite: Reading address 0x%02X" % (0x0) + ". Value: 0x%02X" % (s_value_read))
-
-    await Timer(5*c_CLK_PERIOD, units='ns')
-    await RisingEdge(dut.S_ACLK)  
 
     # Axi write-read regs
     base_addr = c_CORE_BASE_ADDR

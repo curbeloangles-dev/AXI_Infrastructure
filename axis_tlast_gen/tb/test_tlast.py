@@ -12,7 +12,7 @@ def test_tlast_lite_ghdl():
         vhdl_sources=[os.path.join(dir,file)
             for file in sources_list],      # sources
         toplevel="tlastgen_top",            # top level HDL
-        module="tlastgen_lite_test",        # name of cocotb test module
+        module="tlastgen_lite_tb",        # name of cocotb test module
         toplevel_lang="vhdl",
         compile_args=["--ieee=synopsys","--std=08"],
         sim_args=["--wave=wave.ghw"]

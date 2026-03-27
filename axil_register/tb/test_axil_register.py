@@ -12,7 +12,7 @@ def test_axil_register_tb_ghdl():
     run(
         vhdl_sources=[os.path.join(dir,file)
             for file in sources_list],          # sources
-        toplevel="axil_register_top",           # top level HDL
+        toplevel="axil_register_top_tb",         # top level HDL
         module="axil_register_tb",              # name of cocotb test module
         toplevel_lang="vhdl",
         compile_args=["--ieee=synopsys","--std=08"]
