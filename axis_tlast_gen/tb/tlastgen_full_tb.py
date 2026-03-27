@@ -4,8 +4,7 @@ import itertools
 import random
 from cocotb.triggers import Timer, RisingEdge
 from cocotb.clock import Clock
-from cocotbext.axi import AxiStreamFrame, AxiStreamBus, AxiStreamSource, AxiStreamSink
-from cocotbext.axi import AxiLiteBus, AxiLiteMaster
+from cocotbext.axi import AxiStreamFrame, AxiStreamBus, AxiStreamSource, AxiStreamSink, AxiLiteBus, AxiLiteMaster
 
 ###############################
 ###############################

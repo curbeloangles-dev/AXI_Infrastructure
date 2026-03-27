@@ -5,13 +5,14 @@ import glob
 
 dir = os.path.dirname(os.path.abspath(__file__))
 sources_list = glob.glob(dir+"/../src/*.vhd")
+
 @pytest.mark.skipif(os.getenv("SIM") == "questa", reason="")
-def test_tlast_ghdl():
+def test_tlast_lite_ghdl():
     run(
         vhdl_sources=[os.path.join(dir,file)
-            for file in sources_list], # sources
+            for file in sources_list],      # sources
         toplevel="tlastgen_top",            # top level HDL
-        module="tlastGen_test",        # name of cocotb test module
+        module="tlastgen_lite_test",        # name of cocotb test module
         toplevel_lang="vhdl",
         compile_args=["--ieee=synopsys","--std=08"],
         sim_args=["--wave=wave.ghw"]
@@ -25,12 +26,12 @@ def test_tlast_ghdl():
                             {"g_AXIS_TDATA_WIDTH": "256"},
                             ]) 
 @pytest.mark.skipif(os.getenv("SIM") != "ghdl", reason="")
-def test_tlast_fullaxi_ghdl(parameters):
+def test_tlast_full_ghdl(parameters):
     run(
         vhdl_sources=[os.path.join(dir,file)
-            for file in sources_list], # sources
+            for file in sources_list],      # sources
         toplevel="tlastgen_top",            # top level HDL
-        module="tlastgen_tb",        # name of cocotb test module
+        module="tlastgen_full_tb",          # name of cocotb test module
         toplevel_lang="vhdl",
         parameters=parameters,
         extra_env=parameters, 

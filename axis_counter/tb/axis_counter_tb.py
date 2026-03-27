@@ -1,6 +1,5 @@
 # Libraries
 # =============================================================================
-from cocotb_test.simulator import run
 import os
 import cocotb
 import logging
@@ -8,9 +7,7 @@ import random
 from cocotb.triggers         import  Timer, RisingEdge
 from cocotb.result           import  TestFailure
 from cocotb.clock            import  Clock
-from cocotbext.axi import AxiStreamBus
-from cocotbext.axi import AxiStreamSink
-from cocotbext.axi import AxiLiteBus, AxiLiteMaster
+from cocotbext.axi import AxiStreamBus, AxiLiteBus, AxiLiteMaster, AxiStreamSink
 
 # Constants
 #==============================================================================

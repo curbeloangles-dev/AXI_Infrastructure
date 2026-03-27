@@ -57,7 +57,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install cocotb==1.8.1 pytest cocotb-test cocotb-bus
+          pip install cocotb==1.8.1 pytest cocotb-test cocotbext-axi
 
       - name: Run axi_gpio test
         run: |
@@ -151,7 +151,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install cocotb==1.8.1 pytest cocotb-test cocotb-bus
+          pip install cocotb==1.8.1 pytest cocotb-test cocotbext-axi
 
       - name: Run axil_regs test
         run: |
@@ -337,7 +337,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install cocotb==1.8.1 pytest cocotb-test cocotb-bus
+          pip install cocotb==1.8.1 pytest cocotb-test cocotbext-axi
 
       - name: Run axil_bram test
         run: |

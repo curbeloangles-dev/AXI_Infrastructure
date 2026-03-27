@@ -15,7 +15,7 @@
   "dependencies": {},
   "scripts": {
     "postinstall": "",
-    "test_axi_lite": "cd tb; SIM=ghdl pytest -o log_cli=True tlast_test.py::test_tlast_ghdl",
-    "test_full_axi": "cd tb; SIM=ghdl pytest -o log_cli=True tlast_test.py::test_tlast_fullaxi_ghdl"
+    "test_axi_lite": "cd tb; SIM=ghdl pytest -o log_cli=True test_tlast.py::test_tlast_lite_ghdl",
+    "test_full_axi": "cd tb; SIM=ghdl pytest -o log_cli=True test_tlast.py::test_tlast_full_ghdl"
   }
 }

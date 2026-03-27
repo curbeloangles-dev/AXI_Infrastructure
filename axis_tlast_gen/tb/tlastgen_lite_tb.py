@@ -1,16 +1,11 @@
 # Libraries
 # =============================================================================
-from cocotb_test.simulator import run
 import cocotb
 import logging
 import itertools
 from cocotb.triggers         import  Timer, RisingEdge
 from cocotb.clock            import  Clock
-from cocotbext.axi import AxiStreamFrame
-from cocotbext.axi import AxiStreamBus
-from cocotbext.axi import AxiStreamSource
-from cocotbext.axi import AxiStreamSink
-from cocotbext.axi import AxiLiteBus, AxiLiteMaster
+from cocotbext.axi import AxiStreamFrame, AxiLiteBus, AxiLiteMaster, AxiStreamBus, AxiStreamSource, AxiStreamSink
 import random
 
 # Constants
