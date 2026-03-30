@@ -1,7 +1,16 @@
 {
-  "name": "@curbeloangles-dev/axis_tlastgen",
+  "name": "@curbeloangles-dev/axis_tlast_gen",
   "version": "1.0.0",
+  "author": "curbeloangles",
   "description": "AXI modules",
+  "repository": {
+  "type": "git",
+  "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public"
+  },
   "keywords": [
     "AXI",
     "AXIS"
