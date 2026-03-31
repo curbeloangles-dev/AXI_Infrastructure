@@ -8,6 +8,7 @@ This repository contains different AXI masters/slaves modules to perform differe
 - `axil_master/` — AXI-Lite master with a simple address/data interface for issuing read and write transactions.
 - `axis_counter/` — AXI-Stream counter controlled via AXI-Lite: configurable count direction (up/down) and step size.
 - `axis_tlast_gen/` — AXI-Stream tlast generator controlled via AXI-Lite. Supports packet and continuous modes, byte-count-based tlast, data swapping, and tkeep masking.
+- `axis_interleaving/` — AXI-Stream interleaver that merges up to 5 input channels into a single output stream, with AXI-Lite register control and a configurable blocking threshold.
 - `axi_gpio/` — General Purpose I/O peripheral with AXI-Lite control (configurable GPO write and GPI read ports).
 
 Each module follows a common folder layout:
@@ -39,6 +40,9 @@ Configurable AXI-Stream tlast generator with AXI-Lite control. Operates in two m
 - **Continuous mode** (`packetsNum = 0`): generates tlast periodically every N bytes indefinitely.
 
 Additional features: configurable data swapping (word or byte order), tkeep masking to align the last beat of each packet, optional passthrough of the input tlast signal, and a `busy` output indicating active operation.
+
+### axis_interleaving
+AXI-Stream interleaver that merges up to 5 input AXI-Stream channels of the same data width into a single output stream. The number of active channels (`g_CHANNELS_USED`, 1–5) and the data width (`g_AXIS_TDATA_WIDTH`) are configurable via generics. A configurable blocking threshold (`g_BLOCKING_THRESHOLD`) gates the output when too many input channels report NOK status. Runtime control is available through an AXI-Lite register interface exposing a version register, a user-control enable bit, and a per-channel status register.
 
 ### axi_gpio
 General Purpose I/O peripheral with AXI-Lite slave interface. Provides independently configurable GPO (output) and GPI (input) port widths (1–32 bits each). GPO values are written via register and driven directly to output ports; GPI values are sampled from input ports and readable via register. A configurable default GPO reset value is supported.
