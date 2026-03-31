@@ -1,8 +1,8 @@
 {
-  "name": "@curbeloangles-dev/axi_gpio",
+  "name": "@curbeloangles-dev/axis_interleaving",
   "version": "1.0.0",
   "author": "curbeloangles",
-  "description": "AXI GPIO module",
+  "description": "AXIS stream interleaving",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
@@ -12,8 +12,8 @@
     "access": "public"
   },
   "keywords": [
-    "AXI",
-    "GPIO"
+    "AXI-stream",
+    "axis_interleaving"
   ],
   "files": [
     "doc",
@@ -21,9 +21,13 @@
     "tb",
     "README.md"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@curbeloangles-dev/axi_stream_fifo":"1.0.0",
+    "@curbeloangles-dev/gray_cdc":"1.0.0",
+    "@curbeloangles-dev/bit_cdc":"1.0.0"
+  },
   "scripts": {
     "postinstall": "",
-    "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axi_gpio.py; cd .."
+    "test_axis_interleaving": "cd tb; SIM=questa pytest -o log_cli=True test_axis_interleaving.py"
   }
 }

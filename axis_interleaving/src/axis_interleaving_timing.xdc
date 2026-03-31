@@ -1,0 +1,3 @@
+set_false_path -from [get_cells -hierarchical -filter { NAME =~  "*async_fifo*" && NAME =~  "*r_memory*" }] -to [get_cells -hierarchical -filter { NAME =~  "*async_fifo*" && NAME =~  "*o_DOUT_b*" }]
+set_max_delay 8.0 -from [get_cells -hierarchical -filter { NAME =~  "*axis_interleaving*" && NAME =~  "*wr_ctrllr*" && NAME =~  "*r_binary_addr*" }] -to [get_cells -hierarchical -filter { NAME =~  "*axis_interleaving*" && NAME =~  "*r_memory_reg*" }]
+set_max_delay 5.0 -from [get_cells -hierarchical -filter { NAME =~  "*axis_interleaving*" && NAME =~  "*r_axis_tdata*" }] -to [get_cells -hierarchical -filter { NAME =~  "*axis_interleaving*" && NAME =~  "*r_memory_reg*" }]
