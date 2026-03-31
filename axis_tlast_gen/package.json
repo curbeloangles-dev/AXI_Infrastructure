@@ -4,8 +4,8 @@
   "author": "curbeloangles",
   "description": "AXI modules",
   "repository": {
-  "type": "git",
-  "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
+    "type": "git",
+    "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/",

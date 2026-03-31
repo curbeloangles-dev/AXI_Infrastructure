@@ -1,7 +1,16 @@
 {
   "name": "@curbeloangles-dev/axis_counter",
   "version": "1.0.0",
+  "author": "curbeloangles",
   "description": "AXI-Lite configurated counter to AXI-Streaming",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public"
+  },
   "keywords": [
     "AXI-Streaming",
     "axis",

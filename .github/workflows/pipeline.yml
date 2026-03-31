@@ -95,7 +95,7 @@ jobs:
           PKG=@curbeloangles-dev/axi_gpio
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"
 
   # axil_regs jobs
@@ -188,7 +188,7 @@ jobs:
           PKG=@curbeloangles-dev/axil_regs
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"
 
   # axil_register jobs
@@ -281,7 +281,7 @@ jobs:
           PKG=@curbeloangles-dev/axil_register
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"
 
   # axil_bram jobs
@@ -374,7 +374,7 @@ jobs:
           PKG=@curbeloangles-dev/axil_bram
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"
 
   # axil_master jobs
@@ -467,7 +467,7 @@ jobs:
           PKG=@curbeloangles-dev/axil_master
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"
 
   # axis_counter jobs
@@ -560,7 +560,69 @@ jobs:
           PKG=@curbeloangles-dev/axis_counter
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
+          echo "✅ Successfully published $PKG@$VERSION"
+
+  # axis_interleaving jobs
+  axis_interleaving_check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check_version.outputs.should_publish }}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if version needs publishing
+        id: check_version
+        working-directory: ./axis_interleaving/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axis_interleaving
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          if npm view $PKG@$VERSION --registry=https://npm.pkg.github.com/ --silent; then
+            echo "✅ Package $PKG@$VERSION already exists. Skipping tests and publish."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "📦 Package $PKG@$VERSION does not exist. Will run tests and publish."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+  axis_interleaving_release:
+    needs: axis_interleaving_check
+    if: |
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      needs.axis_interleaving_check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_DEV }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com/'
+
+      - name: Publish axis_interleaving IP if version changed
+        working-directory: ./axis_interleaving/
+        run: |
+          echo "@curbeloangles-dev:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+
+          VERSION=$(jq -r .version package.json)
+          PKG=@curbeloangles-dev/axis_interleaving
+
+          echo "📦 Publishing $PKG@$VERSION..."
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"
 
   # axis_tlast_gen jobs
@@ -654,5 +716,5 @@ jobs:
           PKG=@curbeloangles-dev/axis_tlast_gen
 
           echo "📦 Publishing $PKG@$VERSION..."
-          npm publish
+          npm publish --access public
           echo "✅ Successfully published $PKG@$VERSION"

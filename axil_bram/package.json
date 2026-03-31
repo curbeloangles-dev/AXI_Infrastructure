@@ -1,7 +1,16 @@
 {
   "name": "@curbeloangles-dev/axil_bram",
   "version": "1.0.0",
-  "description": "AXI-lite memory.",
+  "author": "curbeloangles",
+  "description": "AXI-lite memory",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public"
+  },
   "keywords": [
     "AXI-lite",
     "axil_bram",

@@ -1,20 +1,29 @@
 {
-    "name": "@curbeloangles-dev/axil_master",
-    "version": "1.0.0",
-    "description": "AXI-Lite Master.",
-    "keywords": [
-      "AXI-lite",
-      "axil_master"
-    ],
-    "files": [
-      "doc",
-      "src",
-      "tb",
-      "README.md"
-    ],
-    "dependencies": {},
-    "scripts": {
-      "postinstall": "",
-      "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axil_master.py; cd .."
-    }
+  "name": "@curbeloangles-dev/axil_master",
+  "version": "1.0.0",
+  "author": "curbeloangles",
+  "description": "AXI-Lite Master",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curbeloangles-dev/AXI_Infrastructure.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public"
+  },
+  "keywords": [
+    "AXI-lite",
+    "axil_master"
+  ],
+  "files": [
+    "doc",
+    "src",
+    "tb",
+    "README.md"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "postinstall": "",
+    "test": "cd tb; SIM=ghdl pytest -o log_cli=True test_axil_master.py; cd .."
+  }
 }
